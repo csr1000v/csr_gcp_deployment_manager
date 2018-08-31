@@ -1,0 +1,63 @@
+resources:
+- name: csr-gcp-01
+  type: compute.v1.instance
+  properties:
+    zone: us-west1-b
+    machineType: https://www.googleapis.com/compute/v1/projects/<project-name>/zones/us-west1-b/machineTypes/n1-standard-1
+    disks:
+    - type: PERSISTENT
+      boot: true
+      autoDelete: true
+      deviceName: csr-gcp-01
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/beta/projects/cisco-csr-image-eft/global/images/iosxe1691fc2
+    canIpForward: true
+    networkInterfaces:
+    - network: $(ref.hybrid-network-vpc.selfLink)
+      subnetwork: $(ref.public-network.selfLink)
+      networkIP: 10.0.0.10
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    metadata:
+      items:
+        - key: block-project-ssh-keys
+          value: 'true'
+        - key: ssh-keys
+          value: |
+            <username>:ssh-rsa<space><ssh_public_key><space><username>
+- name: hybrid-network-vpc
+  type: compute.v1.network
+  properties:
+    autoCreateSubnetworks: false
+    routing-config: 
+      routingMode: REGIONAL
+- name: public-network
+  type: compute.v1.subnetwork
+  properties:
+    network: $(ref.hybrid-network-vpc.selfLink)
+    ipCidrRange: 10.0.0.0/24
+    region: us-west1
+- name: private-network
+  type: compute.v1.subnetwork
+  properties:
+    network: $(ref.hybrid-network-vpc.selfLink)
+    ipCidrRange: 10.0.1.0/24
+    region: us-west1
+- name: route-to-csr
+  type: compute.v1.route
+  properties:
+    network: $(ref.hybrid-network-vpc.selfLink)
+    destRange: 192.168.0.0/16
+    nextHopInstance: $(ref.csr-gcp-01.selfLink)
+- name: inside-firewall-rule-ingress
+  type: compute.v1.firewall
+  properties:
+    direction: INGRESS
+    network: $(ref.hybrid-network-vpc.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: tcp
+      ports: ["22"]
+    - IPProtocol: udp
+      ports: ["500", "4500"]
