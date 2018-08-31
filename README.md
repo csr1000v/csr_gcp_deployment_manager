@@ -15,7 +15,11 @@ This YAML file gives an example to deploy a Cisco CSR1000V using Google Cloud De
 	- An ingress firewall rules: tcp 22 (SSH) from anywhere, udp 500/4500 (IPSEC) from anywhere
  
 Please note you need to create a SSH key pair first, steps can be found here (https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys). Then public key need to be passed as metadata to CSR in YAML file, once CSR boots up, you can use private key to login.
+
+Deploying YAML with gcloud:
  
+	-  gcloud deployment-manager deployments create <deployment-name> --config <file-path>.yaml
+
 metadata:
       items:
         - key: block-project-ssh-keys
