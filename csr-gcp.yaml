@@ -10,7 +10,7 @@ resources:
       autoDelete: true
       deviceName: csr-gcp-01
       initializeParams:
-        sourceImage: https://www.googleapis.com/compute/beta/projects/cisco-csr-image-eft/global/images/iosxe1691fc2
+        sourceImage: https://www.googleapis.com/compute/beta/projects/cisco-public/global/images/csr1000v-173-4-byol
     canIpForward: true
     networkInterfaces:
     - network: $(ref.hybrid-network-vpc.selfLink)
