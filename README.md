@@ -1,6 +1,6 @@
 # csr_gcp_deployment_manager
 
-In order to gain access to CSR1000V image, please contact ask-csr-gcp-pm@cisco.com
+CSR1000v images are publicly available in GCP Marketplace
  
 This YAML file gives an example to deploy a Cisco CSR1000V using Google Cloud Deployment Manager. It creates below components in your GCP
 	
